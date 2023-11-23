@@ -89,8 +89,6 @@ namespace WebTest.Controllers
                     // Actualiza la cookie de sesión en el cliente
                     var sessionCookie = new HttpCookie("MyAppSessionId", user.SessionID);
                     HttpContext.Response.Cookies.Add(sessionCookie); // Agrega la cookie a la respuesta
-
-
                     await UserManager.UpdateAsync(user);
 
                     return RedirectToLocal(returnUrl);

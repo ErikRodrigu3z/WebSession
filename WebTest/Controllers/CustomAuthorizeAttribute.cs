@@ -12,6 +12,8 @@ namespace WebTest.Controllers
         {          
             bool _isAuthorized = false;
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            // Verifica si la cookie de sesión almacenada coincide con la actual
+            var storedSessionId = httpContext.Request.Cookies["MyAppSessionId"]?.Value;
             
             if (httpContext.User.Identity.IsAuthenticated)
             {
@@ -22,8 +24,6 @@ namespace WebTest.Controllers
                 {
                     foreach (var rol in base.Roles.Split(','))
                     {
-                        // Verifica si la cookie de sesión almacenada coincide con la actual
-                        var storedSessionId = httpContext.Request.Cookies["MyAppSessionId"]?.Value;
 
                         if (userManager.IsInRole(userManager.FindByName(httpContext.User.Identity.Name).Id, rol) && 
                             user.SessionID == storedSessionId)
@@ -34,7 +34,7 @@ namespace WebTest.Controllers
                 }
                 else //if _roles is null, the end point only vaidate if user Is Authenticated and SessionID is the same
                 {
-                    return user.SessionID == httpContext.Session.SessionID;
+                    return user.SessionID == storedSessionId;
                 }               
             }
             return _isAuthorized;
